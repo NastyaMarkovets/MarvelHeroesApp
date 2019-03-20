@@ -6,13 +6,13 @@
 //  Copyright © 2019 Lonely Tree Std. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import RealmSwift
 
 class Hero: Object {
-    @objc dynamic var nameHero: String = ""
-    @objc dynamic var descriptionHero: String = ""
-    @objc dynamic var urlPhoto: String? = ""
-    @objc dynamic var extensionPhoto: String? = ""
-    @objc dynamic var photoHero: Data? = nil
+  @objc dynamic var nameHero = ""
+  @objc dynamic var descriptionHero = ""
+  @objc dynamic var urlPhoto: String? = ""
+  @objc dynamic var extensionForUrlPhoto: String? = ""
+  @objc dynamic var photoHero: Data? = nil
 }

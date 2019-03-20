@@ -9,14 +9,13 @@
 import Foundation
 
 class ApiModel {
-    
-    fileprivate let timestamp = Int(Date().timeIntervalSince1970)
-    fileprivate var hash = String()
   
-    func getAuth() -> String {
-        self.hash = "\(timestamp)\(PRIVATE_KEY)\(PUBLIC_KEY)".md5()
-        return ["ts": timestamp, "apikey": PUBLIC_KEY, "hash": hash].queryString!
-
-    }
-   
+  fileprivate let timestamp = Int(Date().timeIntervalSince1970)
+  fileprivate var hash = String()
+  
+  func gettingAuth() -> String {
+    hash = "\(timestamp)\(PRIVATE_KEY)\(PUBLIC_KEY)".md5()
+    return ["ts": timestamp, "apikey": PUBLIC_KEY, "hash": hash].queryString!
+  }
+  
 }
