@@ -41,7 +41,7 @@ class FavoriteHeroViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
-    addingSubviews()
+    addSubviews()
     setupConstraints()
   }
   
@@ -52,10 +52,13 @@ class FavoriteHeroViewController: UIViewController {
     if favoriteHero.count != 0 {
       nameFavoriteLabel.text = favoriteHero[0].nameHero
       descFavoriteTextView.text = favoriteHero[0].descriptionHero
-      avatarFavorite.image = UIImage(data: favoriteHero[0].photoHero!)
-      
       nameFavoriteLabel.textColor = UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0)
       nameFavoriteLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 30.0)
+      guard let photoHero = favoriteHero[0].photoHero else {
+        avatarFavorite.image = UIImage(named: "no_image")
+        return
+      }
+      avatarFavorite.image = UIImage(data: photoHero)
     } else {
       nameFavoriteLabel.text = "No favorite character"
       nameFavoriteLabel.textColor = .lightGray
@@ -63,7 +66,7 @@ class FavoriteHeroViewController: UIViewController {
     }
   }
   
-  private func addingSubviews() {
+  private func addSubviews() {
     view.addSubview(nameFavoriteLabel)
     view.addSubview(avatarFavorite)
     view.addSubview(descFavoriteTextView)
@@ -78,7 +81,7 @@ class FavoriteHeroViewController: UIViewController {
     
     descFavoriteTextView.autoPinEdge(toSuperviewEdge: .left, withInset: 12.0)
     descFavoriteTextView.autoPinEdge(toSuperviewEdge: .right, withInset: 12.0)
-    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .bottom, withInset: tabBarController!.tabBar.frame.height + 6.0)
+    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .bottom, withInset: (tabBarController?.tabBar.frame.height ?? 0) + 6.0)
     descFavoriteTextView.autoPinEdge(.top, to: .bottom, of: nameFavoriteLabel, withOffset: 6.0)
   }
   

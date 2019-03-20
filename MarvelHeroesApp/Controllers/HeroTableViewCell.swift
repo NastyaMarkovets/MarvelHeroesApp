@@ -11,7 +11,7 @@ import RealmSwift
 import PureLayout
 
 protocol FavoriteHeroDelegate: class {
-  func settingFavoriteHero(_ nameHero: String)
+  func setFavoriteHero(_ nameHero: String)
 }
 
 class HeroTableViewCell: UITableViewCell {
@@ -26,7 +26,7 @@ class HeroTableViewCell: UITableViewCell {
     button.autoSetDimensions(to: CGSize(width: 30.0, height: 30.0))
     button.contentHorizontalAlignment = .fill
     button.contentVerticalAlignment = .fill
-    button.addTarget(self, action: #selector(clickedFavorite), for: .touchUpInside)
+    button.addTarget(self, action: #selector(clickFavorite), for: .touchUpInside)
     return button
   }()
   
@@ -85,7 +85,7 @@ class HeroTableViewCell: UITableViewCell {
     infoStackView.autoAlignAxis(toSuperviewAxis: .horizontal)
   }
   
-  func configuringCell(hero: Hero, favoriteName: String) {
+  func configureCell(hero: Hero, favoriteName: String) {
     selectionStyle = .none
     
     nameLabel.text = hero.nameHero
@@ -111,18 +111,19 @@ class HeroTableViewCell: UITableViewCell {
     }
   }
   
-  @objc func clickedFavorite() {
+  @objc func clickFavorite() {
     let hero = Hero()
-    hero.nameHero = nameLabel.text!
-    hero.descriptionHero = descLabel.text!
-    hero.photoHero = avatar.image!.pngData()
-    
+    if let nameLabel = nameLabel.text, let descLable = descLabel.text, let avatar = avatar.image {
+      hero.nameHero = nameLabel
+      hero.descriptionHero = descLable
+      hero.photoHero = avatar.pngData()
+    }
     try! realm.write {
       if realm.objects(Hero.self).count > 0 {
         realm.deleteAll()
       } 
       realm.add(hero)
     }
-    delegate?.settingFavoriteHero(hero.nameHero)
+    delegate?.setFavoriteHero(hero.nameHero)
   }
 }

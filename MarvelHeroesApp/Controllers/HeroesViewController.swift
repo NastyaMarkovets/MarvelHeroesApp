@@ -47,29 +47,29 @@ class HeroesViewController: UIViewController {
     view.backgroundColor = .white
     indicator.startAnimating()
     
-    addingSubviews()
+    addSubviews()
     setupConstraints()
-    loadingCharacters()
+    loadCharacters()
     
     if realm.objects(Hero.self).count != 0 {
       favoriteHero = realm.objects(Hero.self)[0].nameHero
     }
   }
   
-  private func addingSubviews() {
+  private func addSubviews() {
     view.addSubview(heroesTableView)
     view.addSubview(indicator)
   }
   
   private func setupConstraints() {
     heroesTableView.autoPinEdge(toSuperviewEdge: .top, withInset: UIApplication.shared.statusBarFrame.height)
-    heroesTableView.autoPinEdge(toSuperviewEdge: .bottom, withInset: tabBarController!.tabBar.frame.height)
+    heroesTableView.autoPinEdge(toSuperviewEdge: .bottom, withInset: tabBarController?.tabBar.frame.height ?? 0)
     heroesTableView.autoPinEdge(toSuperviewEdge: .right, withInset: 0)
     heroesTableView.autoPinEdge(toSuperviewEdge: .left, withInset: 0)
   }
   
-  private func loadingCharacters() {
-    requestModel.gettingCharacters(page: currentPage, success: { [weak self] (success) in
+  private func loadCharacters() {
+    requestModel.getCharacters(page: currentPage, success: { [weak self] (success) in
       guard let self = self else {
         return
       }
@@ -93,9 +93,11 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! HeroTableViewCell
+    guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? HeroTableViewCell else {
+      return UITableViewCell()
+    }
     cell.delegate = self
-    cell.configuringCell(hero: heroes[indexPath.row], favoriteName: favoriteHero)
+    cell.configureCell(hero: heroes[indexPath.row], favoriteName: favoriteHero)
     return cell
   }
   
@@ -106,14 +108,14 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
   func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
     if ((indexPath.row + 1) % 7 == 0) && (indexPath.row + 1 == heroes.count) {
       currentPage += 1
-      loadingCharacters()
+      loadCharacters()
     }
   }
 }
 
 // MARK: - FavoriteHeroDelegate methods
 extension HeroesViewController: FavoriteHeroDelegate {
-  func settingFavoriteHero(_ nameHero: String) {
+  func setFavoriteHero(_ nameHero: String) {
     favoriteHero = nameHero
     let alert = UIAlertController(title: "Now, \(nameHero) is your favorite character", message: "", preferredStyle: .alert)
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))

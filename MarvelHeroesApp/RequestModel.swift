@@ -19,10 +19,10 @@ class RequestModel: NSObject {
     static let limit = 7
   }
   
-  func gettingCharacters(page: Int, success: @escaping ([Hero]) -> (), failure: @escaping (String) -> ()) {
+  func getCharacters(page: Int, success: @escaping ([Hero]) -> (), failure: @escaping (String) -> ()) {
     let offset = page * UrlComponents.limit
-    let queryParams = ["offset": String(offset), "limit": String(UrlComponents.limit)].queryString!
-    let urlCharacters = UrlComponents.url + "/characters?" + queryParams + apiModel.gettingAuth()
+    let queryParams = ["offset": String(offset), "limit": String(UrlComponents.limit)].queryString
+    let urlCharacters = UrlComponents.url + "/characters?" + queryParams + apiModel.getAuth()
     
     Alamofire.request(urlCharacters, method: .get, encoding: JSONEncoding.default, headers: UrlComponents.header).validate().responseJSON { response in
       if response.result.isSuccess {
