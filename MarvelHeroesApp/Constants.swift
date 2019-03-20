@@ -10,4 +10,3 @@ import Foundation
 
 let PUBLIC_KEY = "dafe2760f7cfb434bcc2069414549d8e"
 let PRIVATE_KEY = "24c356e87c790273561656e6be1c937e5c0c61ba"
-
