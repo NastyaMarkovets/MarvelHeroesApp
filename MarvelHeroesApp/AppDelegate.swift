@@ -16,7 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     self.window = UIWindow(frame: UIScreen.main.bounds)
     let marvelTabBarController = MarvelTabBarController()
-    self.window?.rootViewController = marvelTabBarController
+    let navigationController = UINavigationController(rootViewController: marvelTabBarController)
+    self.window?.rootViewController = navigationController
     self.window?.makeKeyAndVisible()
     return true
   }

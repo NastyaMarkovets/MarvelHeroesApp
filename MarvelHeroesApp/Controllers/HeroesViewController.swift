@@ -111,6 +111,11 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
       loadCharacters()
     }
   }
+  
+  func tableView(_ tableView: UITableView, didSelectRowAt didSelectRowAtIndexPath: IndexPath) {
+    let heroComicsViewController = HeroComicsViewController()
+    navigationController?.pushViewController(heroComicsViewController, animated: true)
+  }
 }
 
 // MARK: - FavoriteHeroDelegate methods
