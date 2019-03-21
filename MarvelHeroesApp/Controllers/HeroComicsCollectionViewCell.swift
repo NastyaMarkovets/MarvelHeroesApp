@@ -17,13 +17,24 @@ class HeroComicsCollectionViewCell: UICollectionViewCell {
     name.text = ""
     name.textAlignment = .center
     name.textColor = UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0)
-    name.font = UIFont(name: "HelveticaNeue-Medium", size: 30.0)
+    name.font = UIFont(name: "HelveticaNeue-Medium", size: 12.0)
     return name
+  }()
+  
+  lazy var imageComics: UIImageView = {
+    let imageView = UIImageView()
+    imageView.autoSetDimensions(to: CGSize(width: 100.0, height: 100.0))
+    imageView.contentMode = .scaleAspectFill
+    imageView.layer.cornerRadius = 50.0
+    imageView.clipsToBounds = true
+    return imageView
   }()
   
   override init(frame: CGRect) {
     super.init(frame: frame)
+    self.backgroundColor = .yellow
     contentView.addSubview(nameComicsLabel)
+    contentView.addSubview(imageComics)
   }
   
   required init?(coder aDecoder: NSCoder) {
@@ -32,7 +43,10 @@ class HeroComicsCollectionViewCell: UICollectionViewCell {
   
   override func layoutSubviews() {
     super.layoutSubviews()
-    nameComicsLabel.autoAlignAxis(toSuperviewAxis: .horizontal)
+    imageComics.autoAlignAxis(toSuperviewAxis: .vertical)
+    imageComics.autoPinEdge(toSuperviewEdge: .top, withInset: 0)
+    
     nameComicsLabel.autoAlignAxis(toSuperviewAxis: .vertical)
+    nameComicsLabel.autoPinEdge(.top, to: .bottom, of: imageComics, withOffset: 2.0)
   }
 }

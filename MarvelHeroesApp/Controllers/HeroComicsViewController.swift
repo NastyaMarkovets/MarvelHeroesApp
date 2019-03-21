@@ -38,13 +38,14 @@ class HeroComicsViewController: UIViewController, UICollectionViewDelegate, UICo
   }
   
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return 5
+    return 30
   }
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroComicsCollectionViewCell.reuseIdentifier, for: indexPath as IndexPath) as? HeroComicsCollectionViewCell else {
       return UICollectionViewCell()
     }
+    cell.imageComics.image = UIImage(named: "no_image")
     cell.nameComicsLabel.text = "Comics"
     return cell
   }
