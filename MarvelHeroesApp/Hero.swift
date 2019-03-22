@@ -10,6 +10,7 @@ import Foundation
 import RealmSwift
 
 class Hero: Object {
+  @objc dynamic var heroId = 0
   @objc dynamic var nameHero = ""
   @objc dynamic var descriptionHero = ""
   @objc dynamic var urlPhoto: String? = ""
