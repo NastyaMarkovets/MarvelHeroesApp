@@ -19,7 +19,7 @@ class RequestModel: NSObject {
     static let limit = 7
   }
   
-  func getCharacters(page: Int, success: @escaping ([Hero]) -> (), failure: @escaping (String) -> ()) {
+  func getCharacters(page: Int, success: @escaping ([Hero]) -> (), failure: @escaping (String) -> Void) {
     let offset = page * UrlComponents.limit
     let queryParams = ["offset": String(offset), "limit": String(UrlComponents.limit)].queryString
     let urlCharacters = UrlComponents.url + "/characters?" + queryParams + apiModel.getAuth()
@@ -28,7 +28,7 @@ class RequestModel: NSObject {
       if response.result.isSuccess {
          if let value = response.result.value as? [String : Any] {
           guard let data = value["data"] as? [String : Any]  else {
-            failure("Request bad.")
+            failure("Problem with request.")
             return
           }
           guard let results = data["results"] as? [[String : Any]] else {
@@ -36,18 +36,20 @@ class RequestModel: NSObject {
             return
           }
           var heroes: [Hero] = []
-          for i in 0 ..< UrlComponents.limit {
+          for index in 0 ..< UrlComponents.limit {
             let hero = Hero()
             guard
-              let name = results[i]["name"] as? String,
-              let desc = results[i]["description"] as? String
+              let id = results[index]["id"] as? Int,
+              let name = results[index]["name"] as? String,
+              let desc = results[index]["description"] as? String
               else { return }
             
-            if let thumbnail = results[i]["thumbnail"] as? [String : Any] {
+            if let thumbnail = results[index]["thumbnail"] as? [String : Any] {
               guard
                 let img = thumbnail["path"] as? String,
                 let ext = thumbnail["extension"] as? String
                 else { return }
+              hero.heroId = id
               hero.nameHero = name
               hero.descriptionHero = desc
               hero.urlPhoto = img
@@ -56,6 +58,41 @@ class RequestModel: NSObject {
             heroes.append(hero)
           }
           success(heroes)
+        }
+      }
+    }
+  }
+  
+  func getComics(page: Int, heroId: Int, success: @escaping ([Comics]) -> (), failure: @escaping (String) -> Void) {
+    let offset = page * UrlComponents.limit
+    let queryParams = ["offset": String(offset), "limit": UrlComponents.limit].queryString 
+    let urlCharacters = UrlComponents.url + "/characters" + "/\(heroId)" + "/comics?" + queryParams + apiModel.getAuth()
+    Alamofire.request(urlCharacters, method: .get, encoding: JSONEncoding.default, headers: UrlComponents.header).validate().responseJSON { response in
+      if response.result.isSuccess {
+        if let value = response.result.value as? [String : Any] {
+          guard let data = value["data"] as? [String : Any]  else {
+            failure("Problem with request")
+            return
+          }
+          guard let results = data["results"] as? [[String : Any]] else {
+            failure("No data was found.")
+            return
+          }
+          var comicsCollection: [Comics] = []
+          for index in 0 ..< results.count {
+            let comics = Comics()
+            guard let id = results[index]["id"] as? Int, let title = results[index]["title"] as? String else { return }
+            
+            if let thumbnail = results[index]["thumbnail"] as? [String : Any] {
+              guard let img = thumbnail["path"] as? String, let ext = thumbnail["extension"] as? String else { return }
+              comics.idComics = id
+              comics.nameComics = title
+              comics.urlPhotoComics = img
+              comics.extensionForUrlPhoto = ext
+            }
+            comicsCollection.append(comics)
+          }
+          success(comicsCollection)
         }
       }
     }

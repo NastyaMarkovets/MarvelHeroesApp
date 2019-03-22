@@ -114,6 +114,7 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
   
   func tableView(_ tableView: UITableView, didSelectRowAt didSelectRowAtIndexPath: IndexPath) {
     let heroComicsViewController = HeroComicsViewController()
+    heroComicsViewController.heroId = heroes[didSelectRowAtIndexPath.row].heroId
     navigationController?.pushViewController(heroComicsViewController, animated: true)
   }
 }

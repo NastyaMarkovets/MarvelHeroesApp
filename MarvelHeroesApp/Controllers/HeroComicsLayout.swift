@@ -9,14 +9,14 @@ import UIKit
 
 class HeroComicsLayout: UICollectionViewLayout {
   
-  fileprivate var numberOfColumns = 2
-  fileprivate var cellPadding: CGFloat = 6
+  private var numberOfColumns = 2
+  private var cellPadding: CGFloat = 6
   
-  fileprivate var cache = [UICollectionViewLayoutAttributes]()
+  private var cache = [UICollectionViewLayoutAttributes]()
   
-  fileprivate var contentHeight: CGFloat = 0
+  private var contentHeight: CGFloat = 0
   
-  fileprivate var contentWidth: CGFloat {
+  private var contentWidth: CGFloat {
     guard let collectionView = collectionView else {
       return 0
     }
@@ -29,46 +29,45 @@ class HeroComicsLayout: UICollectionViewLayout {
   }
   
   override func prepare() {
-    guard cache.isEmpty == true, let collectionView = collectionView else {
+    guard cache.isEmpty, let collectionView = collectionView else {
       return
     }
     
-    var xOffset = [CGFloat]()
-    
-    for column in 0 ..< numberOfColumns {
-      let columnWidth = column == 1 ? (contentWidth / 3) * 2 : (contentWidth / 3)
-      xOffset.append(CGFloat(column) * columnWidth)
-    }
-    
-    var yOffset = [CGFloat](repeating: 0, count: numberOfColumns)
     var column = 0
+    var xOffset = CGFloat()
+    var yOffset = [CGFloat](repeating: 0, count: numberOfColumns)
     
     for item in 0 ..< collectionView.numberOfItems(inSection: 0) {
       let indexPath = IndexPath(item: item, section: 0)
-      let size = item % 3 == 0 ? (contentWidth / 3) * 2 : (contentWidth / 3)
-      let frame = CGRect(x: xOffset[column], y: yOffset[column], width: size, height: size)
-      let insetFrame = frame.insetBy(dx: cellPadding, dy: cellPadding)
+      var size: CGFloat = 0
+      var frame = CGRect(x: 0, y: 0, width: 0, height: 0)
       
-      // 5
+      if item % 6 < 3 {
+        let columnWidth = column == 0 ? (contentWidth / 3) : (contentWidth / 3) * 2
+        xOffset = CGFloat(column) * columnWidth
+        size = item % 6 == 0 ? (contentWidth / 3) * 2 : (contentWidth / 3)
+        frame = CGRect(x: xOffset, y: yOffset[column], width: size, height: size)
+        yOffset[column] = yOffset[column] + size
+        column = item % 6 == 2 ? 0 : 1
+      } else {
+        let columnWidth = column == 0 ? (contentWidth / 3) * 2 : (contentWidth / 3)
+        xOffset = CGFloat(column) * columnWidth
+        size = item % 3 == 1 ? (contentWidth / 3) * 2 : (contentWidth / 3)
+        frame = CGRect(x: xOffset, y: yOffset[column], width: size, height: size)
+        yOffset[column] = yOffset[column] + size
+        column = item % 3 != 0 ? 0 : 1
+      }
+      
+      let insetFrame = frame.insetBy(dx: cellPadding, dy: cellPadding)
       let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
       attributes.frame = insetFrame
       cache.append(attributes)
-      
-      // 6
       contentHeight = max(contentHeight, frame.maxY)
-      
-      yOffset[column] = yOffset[column] + size
-      
-      column = item % 3 == 2 ? 0 : 1
     }
-    
   }
   
   override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-    
     var visibleLayoutAttributes = [UICollectionViewLayoutAttributes]()
-    
-    // Loop through the cache and look for items in the rect
     for attributes in cache {
       if attributes.frame.intersects(rect) {
         visibleLayoutAttributes.append(attributes)
