@@ -16,7 +16,7 @@ class HeroComicsViewController: UIViewController {
   var comicsCollection: [Comics] = []
   
   lazy var comicsCollectionView: UICollectionView = {
-    let collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: heroComicsLayout)
+    let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: heroComicsLayout)
     collectionView.delegate = self
     collectionView.dataSource = self
     collectionView.backgroundColor = .white

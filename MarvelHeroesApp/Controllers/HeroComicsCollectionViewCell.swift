@@ -12,6 +12,11 @@ import Kingfisher
 class HeroComicsCollectionViewCell: UICollectionViewCell {
   
   static let reuseIdentifier = "cellComicsId"
+  
+  private enum Dimensions {
+    static let inset: CGFloat = 6
+    static let sizeTitle: CGFloat = 20
+  }
 
   lazy var nameComicsLabel: UILabel = {
     let name = UILabel()
@@ -30,7 +35,7 @@ class HeroComicsCollectionViewCell: UICollectionViewCell {
   
   override init(frame: CGRect) {
     super.init(frame: frame)
-    backgroundColor = UIColor(red: 245.0/255.0, green: 245.0/255.0, blue: 245.0/255.0, alpha: 1.0)
+    backgroundColor = UIColor(white: 0.9, alpha: 1)
     contentView.addSubview(nameComicsLabel)
     contentView.addSubview(imageComics)
   }
@@ -41,14 +46,15 @@ class HeroComicsCollectionViewCell: UICollectionViewCell {
   
   override func layoutSubviews() {
     super.layoutSubviews()
-    imageComics.autoPinEdge(toSuperviewEdge: .top, withInset: 6)
-    imageComics.autoPinEdge(toSuperviewEdge: .left, withInset: 6)
-    imageComics.autoPinEdge(toSuperviewEdge: .right, withInset: 6)
     
-    nameComicsLabel.autoPinEdge(.top, to: .bottom, of: imageComics, withOffset: 6.0)
-    nameComicsLabel.autoPinEdge(toSuperviewEdge: .left, withInset: 6)
-    nameComicsLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 6)
-    nameComicsLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: 6)
-    nameComicsLabel.autoSetDimension(.height, toSize: 20)
+    imageComics.autoPinEdge(toSuperviewEdge: .top, withInset: Dimensions.inset)
+    imageComics.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
+    imageComics.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
+    
+    nameComicsLabel.autoPinEdge(.top, to: .bottom, of: imageComics, withOffset: Dimensions.inset)
+    nameComicsLabel.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
+    nameComicsLabel.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
+    nameComicsLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: Dimensions.inset)
+    nameComicsLabel.autoSetDimension(.height, toSize: Dimensions.sizeTitle)
   }
 }
