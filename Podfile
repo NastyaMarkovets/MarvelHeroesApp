@@ -10,4 +10,6 @@ target 'MarvelHeroesApp' do
     pod 'RealmSwift'
     pod 'Alamofire'
     pod 'Kingfisher'
+    pod 'Firebase/Auth'
+    pod 'Firebase/Core'
 end
