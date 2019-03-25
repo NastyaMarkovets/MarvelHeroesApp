@@ -12,4 +12,5 @@ target 'MarvelHeroesApp' do
     pod 'Kingfisher'
     pod 'Firebase/Auth'
     pod 'Firebase/Core'
+    pod 'Firebase/Database'
 end

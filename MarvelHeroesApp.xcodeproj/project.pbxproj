@@ -24,6 +24,8 @@
 		EF04E78522436E3B007E669B /* HeroComicsLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF04E78422436E3B007E669B /* HeroComicsLayout.swift */; };
 		EF04E78B22437224007E669B /* HeroComicsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF04E78A22437224007E669B /* HeroComicsCollectionViewCell.swift */; };
 		EF2C524A2244D4CE003683CB /* Comics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2C52492244D4CE003683CB /* Comics.swift */; };
+		EF510F6A2248B1A6009309D2 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF510F692248B1A5009309D2 /* SignUpViewController.swift */; };
+		EF510F6C2248B1C2009309D2 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF510F6B2248B1C2009309D2 /* SignInViewController.swift */; };
 		EF84F58A22450ACD0046AA44 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EF84F58922450ACD0046AA44 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +51,8 @@
 		EF04E78422436E3B007E669B /* HeroComicsLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeroComicsLayout.swift; path = /Users/localuser/Documents/Projects/MarvelHeroesApp/MarvelHeroesApp/Controllers/HeroComicsLayout.swift; sourceTree = "<absolute>"; };
 		EF04E78A22437224007E669B /* HeroComicsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroComicsCollectionViewCell.swift; sourceTree = "<group>"; };
 		EF2C52492244D4CE003683CB /* Comics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comics.swift; sourceTree = "<group>"; };
+		EF510F692248B1A5009309D2 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		EF510F6B2248B1C2009309D2 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		EF84F58922450ACD0046AA44 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,6 +78,8 @@
 				EF04E78222436E38007E669B /* HeroComicsViewController.swift */,
 				EF04E78A22437224007E669B /* HeroComicsCollectionViewCell.swift */,
 				EF04E78422436E3B007E669B /* HeroComicsLayout.swift */,
+				EF510F692248B1A5009309D2 /* SignUpViewController.swift */,
+				EF510F6B2248B1C2009309D2 /* SignInViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -241,6 +247,7 @@
 				"${BUILT_PRODUCTS_DIR}/PureLayout/PureLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -252,6 +259,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PureLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,8 +283,10 @@
 				EF04E78B22437224007E669B /* HeroComicsCollectionViewCell.swift in Sources */,
 				EF2C524A2244D4CE003683CB /* Comics.swift in Sources */,
 				3D57B3D3222947B7008AFED1 /* RequestModel.swift in Sources */,
+				EF510F6A2248B1A6009309D2 /* SignUpViewController.swift in Sources */,
 				3DBBEBFA22285978006ACF8D /* HeroTableViewCell.swift in Sources */,
 				3D57B3D022294656008AFED1 /* Hero.swift in Sources */,
+				EF510F6C2248B1C2009309D2 /* SignInViewController.swift in Sources */,
 				EF04E78322436E38007E669B /* HeroComicsViewController.swift in Sources */,
 				3D20F6992229674D003E635F /* Constants.swift in Sources */,
 				EF04E78522436E3B007E669B /* HeroComicsLayout.swift in Sources */,

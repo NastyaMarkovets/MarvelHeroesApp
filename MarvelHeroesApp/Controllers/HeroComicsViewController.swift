@@ -68,6 +68,7 @@ extension HeroComicsViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     if let path = comicsCollection[indexPath.row].urlPhotoComics, let ext = comicsCollection[indexPath.row].extensionForUrlPhoto {
       if let url = URL(string: path + "." + ext) {
+        cell.imageComics.kf.indicatorType = .activity
         cell.imageComics.kf.setImage(with: url)
       } else {
         cell.imageComics.image = UIImage(named: "no_image")

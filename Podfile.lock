@@ -8,6 +8,9 @@ PODS:
     - FirebaseAnalytics (= 5.7.0)
   - Firebase/CoreOnly (5.18.0):
     - FirebaseCore (= 5.3.1)
+  - Firebase/Database (5.18.0):
+    - Firebase/CoreOnly
+    - FirebaseDatabase (= 5.1.0)
   - FirebaseAnalytics (5.7.0):
     - FirebaseCore (~> 5.3)
     - FirebaseInstanceID (~> 3.6)
@@ -25,6 +28,10 @@ PODS:
   - FirebaseAuthInterop (1.0.0)
   - FirebaseCore (5.3.1):
     - GoogleUtilities/Logger (~> 5.2)
+  - FirebaseDatabase (5.1.0):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 5.2)
+    - leveldb-library (~> 1.18)
   - FirebaseInstanceID (3.7.0):
     - FirebaseCore (~> 5.2)
     - GoogleUtilities/Environment (~> 5.2)
@@ -55,6 +62,7 @@ PODS:
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.2.1)
   - Kingfisher (5.1.1)
+  - leveldb-library (1.20)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
@@ -71,6 +79,7 @@ DEPENDENCIES:
   - Alamofire
   - Firebase/Auth
   - Firebase/Core
+  - Firebase/Database
   - Kingfisher
   - PureLayout
   - RealmSwift
@@ -83,11 +92,13 @@ SPEC REPOS:
     - FirebaseAuth
     - FirebaseAuthInterop
     - FirebaseCore
+    - FirebaseDatabase
     - FirebaseInstanceID
     - GoogleAppMeasurement
     - GoogleUtilities
     - GTMSessionFetcher
     - Kingfisher
+    - leveldb-library
     - nanopb
     - PureLayout
     - Realm
@@ -100,16 +111,18 @@ SPEC CHECKSUMS:
   FirebaseAuth: d85d052354447f30b4b2a805ab91b511458b56a6
   FirebaseAuthInterop: 0ffa57668be100582bb7643d4fcb7615496c41fc
   FirebaseCore: 52f851b30e11360f1e67cf04b1edfebf0a47a2d3
+  FirebaseDatabase: 23acb0c53cd4d4070a427b60100b2e4aaa97c45d
   FirebaseInstanceID: bd6fc5a258884e206fd5c474ebe4f5b00e21770e
   GoogleAppMeasurement: 6cf307834da065863f9faf4c0de0a936d81dd832
   GoogleUtilities: 6481e6318c5fcabaaa8513ef8120f329055d7c10
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   Kingfisher: 2558186963e5be42d98c5b110ccb3130148b77e4
+  leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   PureLayout: f08c01b8dec00bb14a1fefa3de4c7d9c265df85e
   Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
   RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
 
-PODFILE CHECKSUM: 42ba3eef5d4b8cff325434b61183d3159de3efd6
+PODFILE CHECKSUM: 51d241996586673461bd38aad9a94c0c7222a065
 
 COCOAPODS: 1.6.1
