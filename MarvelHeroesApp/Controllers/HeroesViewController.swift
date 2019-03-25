@@ -10,6 +10,7 @@ import UIKit
 import PureLayout
 import RealmSwift
 import Kingfisher
+import FirebaseAuth
 
 class HeroesViewController: UIViewController {
   
@@ -42,9 +43,14 @@ class HeroesViewController: UIViewController {
     return tableView
   }()
   
+
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
+    
+    
+    
     indicator.startAnimating()
     
     addSubviews()
@@ -84,6 +90,7 @@ class HeroesViewController: UIViewController {
       self.indicator.stopAnimating()
     }
   }
+  
 }
 
 // MARK: - UITableViewDataSource and UITableViewDelegate

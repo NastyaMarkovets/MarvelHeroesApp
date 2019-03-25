@@ -121,7 +121,7 @@ class HeroTableViewCell: UITableViewCell {
     try! realm.write {
       if realm.objects(Hero.self).count > 0 {
         realm.deleteAll()
-      } 
+      }
       realm.add(hero)
     }
     delegate?.setFavoriteHero(hero.nameHero)

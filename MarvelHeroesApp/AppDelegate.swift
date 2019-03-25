@@ -26,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       self.window?.rootViewController = signUpViewController
     }
     self.window?.makeKeyAndVisible()
+    
     return true
   }
   

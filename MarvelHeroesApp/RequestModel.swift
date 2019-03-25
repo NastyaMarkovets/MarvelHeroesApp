@@ -8,6 +8,8 @@
 
 import Foundation
 import Alamofire
+import Firebase
+import FirebaseAuth
 
 class RequestModel: NSObject {
   
@@ -94,6 +96,30 @@ class RequestModel: NSObject {
           }
           success(comicsCollection)
         }
+      }
+    }
+  }
+  
+  func createUser(email: String, password: String, success: @escaping (String) -> (), failure: @escaping (String) -> Void) {
+    Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
+      if error == nil {
+        success("You have successfully signed up")
+      } else {
+        guard let acceptedError = error?.localizedDescription else { return }
+        failure("Sorry, \(String(describing: acceptedError))")
+        
+      }
+    }
+  }
+  
+  func signInAccount(email: String, password: String, success: @escaping (String) -> (), failure: @escaping (String) -> Void) {
+    Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
+      if error == nil {
+        success("You have successfully signed in")
+      } else {
+        guard let acceptedError = error?.localizedDescription else { return }
+        failure("Sorry, \(String(describing: acceptedError))")
+        
       }
     }
   }

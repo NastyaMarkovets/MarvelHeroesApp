@@ -10,6 +10,8 @@ import UIKit
 
 class SignInViewController: UIViewController {
   
+  let requestModel = RequestModel()
+  
   private enum Dimensions {
     static let inset: CGFloat = 18
   }
@@ -57,8 +59,7 @@ class SignInViewController: UIViewController {
     signInButton.setTitle("Sign In", for: .normal)
     signInButton.backgroundColor = UIColor(red: 0 / 255.0, green: 160.0 / 255.0, blue: 0 / 255.0, alpha: 1)
     signInButton.titleLabel?.font = UIFont(name: "HelveticaNeue-Regular", size: 14.0)
-    
-    //signUpButton.addTarget(self, action: #selector(), for: .touchUpInside)
+    signInButton.addTarget(self, action: #selector(signInAccount), for: .touchUpInside)
     return signInButton
   }()
   
@@ -66,7 +67,7 @@ class SignInViewController: UIViewController {
     let linkToSignUpButton = UIButton()
     linkToSignUpButton.autoSetDimensions(to: CGSize(width: 70.0, height: 30.0))
     linkToSignUpButton.setTitle("Sign Up", for: .normal)
-    linkToSignUpButton.setTitleColor(.blue, for: .normal)
+    linkToSignUpButton.setTitleColor(UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0), for: .normal)
     linkToSignUpButton.titleLabel?.font = UIFont(name: "HelveticaNeue-Regular", size: 14.0)
     
     linkToSignUpButton.addTarget(self, action: #selector(transitionToSignUp), for: .touchUpInside)
@@ -106,4 +107,27 @@ class SignInViewController: UIViewController {
     present(signUpViewController, animated: true, completion: nil)
   }
 
+  @objc func signInAccount() {
+    if emailTextField.text != "" && passwordTextField.text != "" {
+      guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+      requestModel.signInAccount(email: email, password: password, success: { (user) in
+        print(user)
+        let marvelTabBarController = MarvelTabBarController()
+        let navigationController = UINavigationController(rootViewController: marvelTabBarController)
+        self.present(navigationController, animated: true, completion: nil)
+      }) { (error) in
+        let errorAlert = UIAlertController(title: error, message: "Please, try again", preferredStyle: .alert)
+        let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        errorAlert.addAction(defaultAction)
+        self.present(errorAlert, animated: true, completion:  nil)
+        print(error)
+      }
+    } else {
+      let emptyTextFieldAlert = UIAlertController(title: nil, message: "Please enter your email or password", preferredStyle: .alert)
+      let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+      emptyTextFieldAlert.addAction(defaultAction)
+      present(emptyTextFieldAlert, animated: true, completion:  nil)
+    }
+  }
+  
 }
