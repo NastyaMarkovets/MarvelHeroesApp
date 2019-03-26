@@ -7,7 +7,6 @@ target 'MarvelHeroesApp' do
 
   # Pods for MarvelHeroesApp
     pod 'PureLayout'
-    pod 'RealmSwift'
     pod 'Alamofire'
     pod 'Kingfisher'
     pod 'Firebase/Auth'

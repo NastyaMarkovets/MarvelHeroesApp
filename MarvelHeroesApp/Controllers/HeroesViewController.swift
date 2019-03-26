@@ -8,21 +8,20 @@
 
 import UIKit
 import PureLayout
-import RealmSwift
 import Kingfisher
 import FirebaseAuth
+import FirebaseDatabase
 
 class HeroesViewController: UIViewController {
   
   private let cellId = "cellId"
   private var currentPage = 0
   var heroes: [Hero] = []
-  let realm = try! Realm()
   let requestModel = RequestModel()
   
-  private var favoriteHero = "" {
+  private var idFavoriteHero = 0 {
     didSet {
-      heroesTableView.reloadData()
+      self.heroesTableView.reloadData()
     }
   }
   
@@ -43,22 +42,17 @@ class HeroesViewController: UIViewController {
     return tableView
   }()
   
-
-  
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
-    
-    
-    
+  
     indicator.startAnimating()
     
     addSubviews()
     setupConstraints()
     loadCharacters()
-    
-    if realm.objects(Hero.self).count != 0 {
-      favoriteHero = realm.objects(Hero.self)[0].nameHero
+    requestModel.fetchHero { (heroId) in
+      self.idFavoriteHero = heroId
     }
   }
   
@@ -104,7 +98,7 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
       return UITableViewCell()
     }
     cell.delegate = self
-    cell.configureCell(hero: heroes[indexPath.row], favoriteName: favoriteHero)
+    cell.configureCell(hero: heroes[indexPath.row], favoriteId: idFavoriteHero)
     return cell
   }
   
@@ -128,11 +122,10 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - FavoriteHeroDelegate methods
 extension HeroesViewController: FavoriteHeroDelegate {
-  func setFavoriteHero(_ nameHero: String) {
-    favoriteHero = nameHero
+  func setFavoriteHero(nameHero: String, heroId: Int) {
+    idFavoriteHero = heroId
     let alert = UIAlertController(title: "Now, \(nameHero) is your favorite character", message: "", preferredStyle: .alert)
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
     self.present(alert, animated: true, completion: nil)
   }
-  
 }

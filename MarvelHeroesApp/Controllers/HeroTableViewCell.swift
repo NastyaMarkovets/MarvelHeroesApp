@@ -7,18 +7,19 @@
 //
 
 import UIKit
-import RealmSwift
+import FirebaseAuth
+import FirebaseDatabase
 import PureLayout
 
 protocol FavoriteHeroDelegate: class {
-  func setFavoriteHero(_ nameHero: String)
+  func setFavoriteHero(nameHero: String, heroId: Int)
 }
 
 class HeroTableViewCell: UITableViewCell {
   
-  let realm = try! Realm()
   weak var delegate: FavoriteHeroDelegate?
   private let infoStackView = UIStackView()
+  var heroId: Int?
   
   lazy var starButton: UIButton = {
     let button = UIButton()
@@ -85,13 +86,14 @@ class HeroTableViewCell: UITableViewCell {
     infoStackView.autoAlignAxis(toSuperviewAxis: .horizontal)
   }
   
-  func configureCell(hero: Hero, favoriteName: String) {
+  func configureCell(hero: Hero, favoriteId: Int) {
     selectionStyle = .none
     
+    heroId = hero.heroId
     nameLabel.text = hero.nameHero
     descLabel.text = hero.descriptionHero
     
-    if hero.nameHero == favoriteName {
+    if hero.heroId == favoriteId {
       starButton.setImage(UIImage(named: "starActive"), for: .normal)
     } else {
       starButton.setImage(UIImage(named: "star"), for: .normal)
@@ -112,18 +114,13 @@ class HeroTableViewCell: UITableViewCell {
   }
   
   @objc func clickFavorite() {
-    let hero = Hero()
-    if let nameLabel = nameLabel.text, let descLable = descLabel.text, let avatar = avatar.image {
-      hero.nameHero = nameLabel
-      hero.descriptionHero = descLable
-      hero.photoHero = avatar.pngData()
+    if let heroId = heroId {
+      let reference = Database.database().reference()
+      guard let uid = Auth.auth().currentUser?.uid else { return }
+      reference.child("users").child("\(String(describing: uid))").setValue(["heroId" : heroId])
+      
+      guard let nameHero = nameLabel.text else { return }
+      delegate?.setFavoriteHero(nameHero: nameHero, heroId: heroId)
     }
-    try! realm.write {
-      if realm.objects(Hero.self).count > 0 {
-        realm.deleteAll()
-      }
-      realm.add(hero)
-    }
-    delegate?.setFavoriteHero(hero.nameHero)
   }
 }

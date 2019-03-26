@@ -69,11 +69,6 @@ PODS:
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - PureLayout (3.1.4)
-  - Realm (3.13.1):
-    - Realm/Headers (= 3.13.1)
-  - Realm/Headers (3.13.1)
-  - RealmSwift (3.13.1):
-    - Realm (= 3.13.1)
 
 DEPENDENCIES:
   - Alamofire
@@ -82,7 +77,6 @@ DEPENDENCIES:
   - Firebase/Database
   - Kingfisher
   - PureLayout
-  - RealmSwift
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -101,8 +95,6 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - PureLayout
-    - Realm
-    - RealmSwift
 
 SPEC CHECKSUMS:
   Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
@@ -120,9 +112,7 @@ SPEC CHECKSUMS:
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   PureLayout: f08c01b8dec00bb14a1fefa3de4c7d9c265df85e
-  Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
-  RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
 
-PODFILE CHECKSUM: 51d241996586673461bd38aad9a94c0c7222a065
+PODFILE CHECKSUM: ac24e4eacd4fa30c524ae6d59224f94dc69cce9f
 
 COCOAPODS: 1.6.1

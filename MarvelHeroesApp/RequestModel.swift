@@ -9,6 +9,7 @@
 import Foundation
 import Alamofire
 import Firebase
+import FirebaseDatabase
 import FirebaseAuth
 
 class RequestModel: NSObject {
@@ -61,6 +62,45 @@ class RequestModel: NSObject {
           }
           success(heroes)
         }
+      }
+    }
+  }
+  
+  func getCharacter(heroId: Int, success: @escaping (Hero) -> (), failure: @escaping (String) -> Void) {
+    let urlCharacters = UrlComponents.url + "/characters" + "/\(heroId)?" + apiModel.getAuth()
+    Alamofire.request(urlCharacters, method: .get, encoding: JSONEncoding.default, headers: UrlComponents.header).validate().responseJSON { response in
+      if response.result.isSuccess {
+        if let value = response.result.value as? [String : Any] {
+          guard let data = value["data"] as? [String : Any]  else {
+            failure("Problem with request.")
+            return
+          }
+          guard let results = data["results"] as? [[String : Any]] else {
+            failure("No data was found.")
+            return
+          }
+          let hero = Hero()
+            guard
+              let id = results[0]["id"] as? Int,
+              let name = results[0]["name"] as? String,
+              let desc = results[0]["description"] as? String
+              else { return }
+            
+            if let thumbnail = results[0]["thumbnail"] as? [String : Any] {
+              guard
+                let img = thumbnail["path"] as? String,
+                let ext = thumbnail["extension"] as? String
+                else { return }
+              hero.heroId = id
+              hero.nameHero = name
+              hero.descriptionHero = desc
+              hero.urlPhoto = img
+              hero.extensionForUrlPhoto = ext
+            }
+          success(hero)
+        }
+      } else {
+        failure("Problem with request.")
       }
     }
   }
@@ -121,6 +161,17 @@ class RequestModel: NSObject {
         failure("Sorry, \(String(describing: acceptedError))")
         
       }
+    }
+  }
+  
+  func fetchHero(success: @escaping (Int) -> ()) {
+    guard let uid = Auth.auth().currentUser?.uid else { return }
+    Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+      let value = snapshot.value as? NSDictionary
+      let heroId = value?["heroId"] as? Int ?? 0
+      success(heroId)
+    }) { (error) in
+      print(error.localizedDescription)
     }
   }
   

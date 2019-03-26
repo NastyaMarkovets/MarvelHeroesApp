@@ -7,10 +7,13 @@
 //
 
 import UIKit
-import RealmSwift
+import FirebaseDatabase
+import FirebaseAuth
 import PureLayout
 
 class FavoriteHeroViewController: UIViewController {
+  
+  let requestModel = RequestModel()
   
   lazy var avatarFavorite: UIImageView = {
     let imageView = UIImageView()
@@ -46,23 +49,28 @@ class FavoriteHeroViewController: UIViewController {
   }
   
   override func viewWillAppear(_ animated: Bool) {
-    let realm = try! Realm()
-    
-    let favoriteHero = realm.objects(Hero.self)
-    if favoriteHero.count != 0 {
-      nameFavoriteLabel.text = favoriteHero[0].nameHero
-      descFavoriteTextView.text = favoriteHero[0].descriptionHero
-      nameFavoriteLabel.textColor = UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0)
-      nameFavoriteLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 30.0)
-      guard let photoHero = favoriteHero[0].photoHero else {
-        avatarFavorite.image = UIImage(named: "no_image")
-        return
+    requestModel.fetchHero { (heroId) in
+      print(heroId)
+      self.requestModel.getCharacter(heroId: heroId, success: { (hero) in
+        self.nameFavoriteLabel.text = hero.nameHero
+        self.descFavoriteTextView.text = hero.descriptionHero
+        self.nameFavoriteLabel.textColor = UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0)
+        self.nameFavoriteLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 30.0)
+        if let path = hero.urlPhoto, let ext = hero.extensionForUrlPhoto {
+          if let url = URL(string: path + "." + ext) {
+            if url == URL(string: "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
+              self.avatarFavorite.image = UIImage(named: "no_image")
+              return
+            }
+            self.avatarFavorite.kf.indicatorType = .activity
+            self.avatarFavorite.kf.setImage(with: url)
+          } else {
+            self.avatarFavorite.image = UIImage(named: "no_image")
+          }
+        }
+      }) { (failure) in
+        print(failure)
       }
-      avatarFavorite.image = UIImage(data: photoHero)
-    } else {
-      nameFavoriteLabel.text = "No favorite character"
-      nameFavoriteLabel.textColor = .lightGray
-      nameFavoriteLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 18.0)
     }
   }
   
