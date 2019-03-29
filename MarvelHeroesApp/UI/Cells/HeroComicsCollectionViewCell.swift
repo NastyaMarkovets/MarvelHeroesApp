@@ -22,7 +22,7 @@ class HeroComicsCollectionViewCell: UICollectionViewCell {
     let name = UILabel()
     name.text = ""
     name.textAlignment = .center
-    name.font = UIFont(name: "HelveticaNeue-Medium", size: 14.0)
+    name.font = UIFont.fontHelveticaMedium(size: 14.0)
     return name
   }()
   

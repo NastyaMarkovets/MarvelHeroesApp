@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,10 +16,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     self.window = UIWindow(frame: UIScreen.main.bounds)
-    let marvelTabBarController = MarvelTabBarController()
-    let navigationController = UINavigationController(rootViewController: marvelTabBarController)
-    self.window?.rootViewController = navigationController
+    FirebaseApp.configure()
+    if Auth.auth().currentUser != nil {
+      let marvelTabBarController = MarvelTabBarController()
+      let navigationController = UINavigationController(rootViewController: marvelTabBarController)
+      self.window?.rootViewController = navigationController
+    } else {
+      let signUpViewController = SignUpViewController()
+      self.window?.rootViewController = signUpViewController
+    }
     self.window?.makeKeyAndVisible()
+    
     return true
   }
   

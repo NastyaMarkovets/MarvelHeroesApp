@@ -7,18 +7,24 @@
 //
 
 import UIKit
-import RealmSwift
+import FirebaseAuth
+import FirebaseDatabase
 import PureLayout
 
 protocol FavoriteHeroDelegate: class {
-  func setFavoriteHero(_ nameHero: String)
+  func setFavoriteHero(nameHero: String, heroId: Int)
 }
 
 class HeroTableViewCell: UITableViewCell {
   
-  let realm = try! Realm()
   weak var delegate: FavoriteHeroDelegate?
   private let infoStackView = UIStackView()
+  var heroId: Int?
+  
+  private enum Dimensions {
+    static let spacing: CGFloat = 6
+    static let inset: CGFloat = 12
+  }
   
   lazy var starButton: UIButton = {
     let button = UIButton()
@@ -32,15 +38,15 @@ class HeroTableViewCell: UITableViewCell {
   
   lazy var nameLabel: UILabel = {
     let name = UILabel()
-    name.font = UIFont(name: "HelveticaNeue", size: 17.0)
-    name.textColor = UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0)
+    name.font = UIFont.fontHelveticaRegular(size: 17.0)
+    name.textColor = UIColor.customBlue()
     return name
   }()
   
   lazy var descLabel: UILabel = {
     let desc = UILabel()
     desc.numberOfLines = 4
-    desc.font = UIFont(name: "HelveticaNeue", size: 14.0)
+    desc.font = UIFont.fontHelveticaRegular(size: 14.0)
     return desc
   }()
   
@@ -74,56 +80,51 @@ class HeroTableViewCell: UITableViewCell {
     starButton.autoPinEdge(.top, to: .top, of: avatar)
     
     avatar.autoAlignAxis(toSuperviewAxis: .horizontal)
-    avatar.autoPinEdge(toSuperviewEdge: .left, withInset: 12.0)
+    avatar.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
     
     infoStackView.addArrangedSubview(nameLabel)
     infoStackView.addArrangedSubview(descLabel)
     infoStackView.axis = NSLayoutConstraint.Axis.vertical
-    infoStackView.spacing = 6.0
-    infoStackView.autoPinEdge(.left, to: .right, of: avatar, withOffset: 12.0)
-    infoStackView.autoPinEdge(toSuperviewEdge: .right, withInset: 12.0)
+    infoStackView.spacing = Dimensions.spacing
+    infoStackView.autoPinEdge(.left, to: .right, of: avatar, withOffset: Dimensions.inset)
+    infoStackView.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
     infoStackView.autoAlignAxis(toSuperviewAxis: .horizontal)
   }
   
-  func configureCell(hero: Hero, favoriteName: String) {
+  func configureCell(hero: Hero, favoriteId: Int) {
     selectionStyle = .none
     
+    heroId = hero.heroId
     nameLabel.text = hero.nameHero
     descLabel.text = hero.descriptionHero
     
-    if hero.nameHero == favoriteName {
+    if hero.heroId == favoriteId {
       starButton.setImage(UIImage(named: "starActive"), for: .normal)
     } else {
       starButton.setImage(UIImage(named: "star"), for: .normal)
     }
     if let path = hero.urlPhoto, let ext = hero.extensionForUrlPhoto {
       if let url = URL(string: path + "." + ext) {
-        if url == URL(string: "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
-          avatar.image = UIImage(named: "no_image")
+        if url == URL(string: Constants.urlNoImage) {
+          avatar.image = UIImage.noImage()
           return
         }
         avatar.kf.indicatorType = .activity
         avatar.kf.setImage(with: url)
         
       } else {
-        avatar.image = UIImage(named: "no_image")
+        avatar.image = UIImage.noImage()
       }
     }
   }
   
   @objc func clickFavorite() {
-    let hero = Hero()
-    if let nameLabel = nameLabel.text, let descLable = descLabel.text, let avatar = avatar.image {
-      hero.nameHero = nameLabel
-      hero.descriptionHero = descLable
-      hero.photoHero = avatar.pngData()
+    if let heroId = heroId {
+      FactoryManager.shared.firebaseManager.setHero(heroId: heroId) { (success) in
+        print(success)
+      }
+      guard let nameHero = nameLabel.text else { return }
+      delegate?.setFavoriteHero(nameHero: nameHero, heroId: heroId)
     }
-    try! realm.write {
-      if realm.objects(Hero.self).count > 0 {
-        realm.deleteAll()
-      } 
-      realm.add(hero)
-    }
-    delegate?.setFavoriteHero(hero.nameHero)
   }
 }

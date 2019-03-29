@@ -8,21 +8,25 @@
 
 import UIKit
 import PureLayout
-import RealmSwift
 import Kingfisher
+import FirebaseAuth
+import FirebaseDatabase
 
 class HeroesViewController: UIViewController {
   
   private let cellId = "cellId"
   private var currentPage = 0
   var heroes: [Hero] = []
-  let realm = try! Realm()
-  let requestModel = RequestModel()
-  
-  private var favoriteHero = "" {
+  let heroComicsViewController = HeroComicsViewController()
+  private var idFavoriteHero = 0 {
     didSet {
-      heroesTableView.reloadData()
+      self.heroesTableView.reloadData()
     }
+  }
+  
+  private enum Dimensions {
+    static let inset: CGFloat = 0
+    static let heightCell: CGFloat = 130
   }
   
   lazy var indicator: UIActivityIndicatorView = {
@@ -45,14 +49,14 @@ class HeroesViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
+  
     indicator.startAnimating()
     
     addSubviews()
     setupConstraints()
     loadCharacters()
-    
-    if realm.objects(Hero.self).count != 0 {
-      favoriteHero = realm.objects(Hero.self)[0].nameHero
+    FactoryManager.shared.firebaseManager.fetchHero { (heroId) in
+      self.idFavoriteHero = heroId
     }
   }
   
@@ -63,13 +67,13 @@ class HeroesViewController: UIViewController {
   
   private func setupConstraints() {
     heroesTableView.autoPinEdge(toSuperviewEdge: .top, withInset: UIApplication.shared.statusBarFrame.height)
-    heroesTableView.autoPinEdge(toSuperviewEdge: .bottom, withInset: tabBarController?.tabBar.frame.height ?? 0)
-    heroesTableView.autoPinEdge(toSuperviewEdge: .right, withInset: 0)
-    heroesTableView.autoPinEdge(toSuperviewEdge: .left, withInset: 0)
+    heroesTableView.autoPinEdge(toSuperviewEdge: .bottom, withInset: tabBarController?.tabBar.frame.height ?? Dimensions.inset)
+    heroesTableView.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
+    heroesTableView.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
   }
   
   private func loadCharacters() {
-    requestModel.getCharacters(page: currentPage, success: { [weak self] (success) in
+    FactoryManager.shared.marvelAPIManager.getCharacters(page: currentPage, success: { [weak self] (success) in
       guard let self = self else {
         return
       }
@@ -84,6 +88,7 @@ class HeroesViewController: UIViewController {
       self.indicator.stopAnimating()
     }
   }
+  
 }
 
 // MARK: - UITableViewDataSource and UITableViewDelegate
@@ -97,12 +102,12 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
       return UITableViewCell()
     }
     cell.delegate = self
-    cell.configureCell(hero: heroes[indexPath.row], favoriteName: favoriteHero)
+    cell.configureCell(hero: heroes[indexPath.row], favoriteId: idFavoriteHero)
     return cell
   }
   
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    return 130
+    return Dimensions.heightCell
   }
   
   func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -113,7 +118,6 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt didSelectRowAtIndexPath: IndexPath) {
-    let heroComicsViewController = HeroComicsViewController()
     heroComicsViewController.heroId = heroes[didSelectRowAtIndexPath.row].heroId
     navigationController?.pushViewController(heroComicsViewController, animated: true)
   }
@@ -121,11 +125,9 @@ extension HeroesViewController: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - FavoriteHeroDelegate methods
 extension HeroesViewController: FavoriteHeroDelegate {
-  func setFavoriteHero(_ nameHero: String) {
-    favoriteHero = nameHero
-    let alert = UIAlertController(title: "Now, \(nameHero) is your favorite character", message: "", preferredStyle: .alert)
-    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-    self.present(alert, animated: true, completion: nil)
+  func setFavoriteHero(nameHero: String, heroId: Int) {
+    idFavoriteHero = heroId
+    let alertFavorite = FactoryManager.shared.alertManager.addAlert(message: "Now, \(nameHero) is your favorite character")
+    self.present(alertFavorite, animated: true, completion: nil)
   }
-  
 }

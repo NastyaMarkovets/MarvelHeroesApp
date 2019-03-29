@@ -7,14 +7,19 @@
 //
 
 import UIKit
-import RealmSwift
+import FirebaseDatabase
+import FirebaseAuth
 import PureLayout
 
 class FavoriteHeroViewController: UIViewController {
   
+  private enum Dimensions {
+    static let inset: CGFloat = 12
+    static let insetTopToBottom: CGFloat = 6
+  }
+  
   lazy var avatarFavorite: UIImageView = {
     let imageView = UIImageView()
-    imageView.image = UIImage(named: "no_avatar")
     imageView.contentMode = .scaleAspectFill
     imageView.clipsToBounds = true
     imageView.autoSetDimensions(to: CGSize(width: view.frame.width, height: view.frame.height / 2))
@@ -25,15 +30,15 @@ class FavoriteHeroViewController: UIViewController {
     let name = UILabel()
     name.text = ""
     name.textAlignment = .center
-    name.textColor = UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0)
-    name.font = UIFont(name: "HelveticaNeue-Medium", size: 30.0)
+    name.textColor = UIColor.customGray()
+    name.font = UIFont.fontHelveticaMedium(size: 30.0)
     return name
   }()
   
   lazy var descFavoriteTextView: UITextView = {
     let desc = UITextView()
     desc.text = ""
-    desc.font = UIFont(name: "HelveticaNeue", size: 17.0)
+    desc.font = UIFont.fontHelveticaRegular(size: 17.0)
     desc.isSelectable = false
     return desc
   }()
@@ -46,23 +51,27 @@ class FavoriteHeroViewController: UIViewController {
   }
   
   override func viewWillAppear(_ animated: Bool) {
-    let realm = try! Realm()
-    
-    let favoriteHero = realm.objects(Hero.self)
-    if favoriteHero.count != 0 {
-      nameFavoriteLabel.text = favoriteHero[0].nameHero
-      descFavoriteTextView.text = favoriteHero[0].descriptionHero
-      nameFavoriteLabel.textColor = UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0)
-      nameFavoriteLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 30.0)
-      guard let photoHero = favoriteHero[0].photoHero else {
-        avatarFavorite.image = UIImage(named: "no_image")
-        return
+    FactoryManager.shared.firebaseManager.fetchHero { (heroId) in
+      FactoryManager.shared.marvelAPIManager.getCharacter(heroId: heroId, success: { (hero) in
+        self.nameFavoriteLabel.text = hero.nameHero
+        self.descFavoriteTextView.text = hero.descriptionHero
+        self.nameFavoriteLabel.textColor = UIColor.customBlue()
+        
+        if let path = hero.urlPhoto, let ext = hero.extensionForUrlPhoto {
+          if let url = URL(string: path + "." + ext) {
+            if url == URL(string: Constants.urlNoImage) {
+              self.avatarFavorite.image = UIImage.noImage()
+              return
+            }
+            self.avatarFavorite.kf.indicatorType = .activity
+            self.avatarFavorite.kf.setImage(with: url)
+          } else {
+            self.avatarFavorite.image = UIImage.noImage()
+          }
+        }
+      }) { (failure) in
+        print(failure)
       }
-      avatarFavorite.image = UIImage(data: photoHero)
-    } else {
-      nameFavoriteLabel.text = "No favorite character"
-      nameFavoriteLabel.textColor = .lightGray
-      nameFavoriteLabel.font = UIFont(name: "HelveticaNeue-Medium", size: 18.0)
     }
   }
   
@@ -75,14 +84,14 @@ class FavoriteHeroViewController: UIViewController {
   private func setupConstraints() {
     avatarFavorite.autoPinEdge(toSuperviewEdge: .top, withInset: UIApplication.shared.statusBarFrame.height)
     
-    nameFavoriteLabel.autoPinEdge(toSuperviewEdge: .left, withInset: 12.0)
-    nameFavoriteLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 12.0)
-    nameFavoriteLabel.autoPinEdge(.top, to: .bottom, of: avatarFavorite, withOffset: 6.0)
+    nameFavoriteLabel.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
+    nameFavoriteLabel.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
+    nameFavoriteLabel.autoPinEdge(.top, to: .bottom, of: avatarFavorite, withOffset: Dimensions.insetTopToBottom)
     
-    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .left, withInset: 12.0)
-    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .right, withInset: 12.0)
-    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .bottom, withInset: (tabBarController?.tabBar.frame.height ?? 0) + 6.0)
-    descFavoriteTextView.autoPinEdge(.top, to: .bottom, of: nameFavoriteLabel, withOffset: 6.0)
+    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
+    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
+    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .bottom, withInset: (tabBarController?.tabBar.frame.height ?? 0) + Dimensions.insetTopToBottom)
+    descFavoriteTextView.autoPinEdge(.top, to: .bottom, of: nameFavoriteLabel, withOffset: Dimensions.insetTopToBottom)
   }
   
 }
