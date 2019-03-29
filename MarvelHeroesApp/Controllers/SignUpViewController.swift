@@ -10,8 +10,6 @@ import UIKit
 
 class SignUpViewController: UIViewController {
   
-  let requestModel = RequestModel()
-  
   private enum Dimensions {
     static let inset: CGFloat = 18
   }
@@ -28,7 +26,7 @@ class SignUpViewController: UIViewController {
     signUpLabel.text = "Create your personal account"
     signUpLabel.textAlignment = .center
     signUpLabel.numberOfLines = 2
-    signUpLabel.font = UIFont(name: "HelveticaNeue-Light", size: 24.0)
+    signUpLabel.font = UIFont.fontHelveticaLight(size: 24.0)
     return signUpLabel
   }()
   
@@ -36,7 +34,7 @@ class SignUpViewController: UIViewController {
     let emailLabel = UILabel()
     emailLabel.text = "Email"
     emailLabel.textAlignment = .left
-    emailLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12.0)
+    emailLabel.font = UIFont.fontHelveticaLight(size: 12.0)
     return emailLabel
   }()
   
@@ -44,21 +42,23 @@ class SignUpViewController: UIViewController {
     let passwordLabel = UILabel()
     passwordLabel.text = "Password"
     passwordLabel.textAlignment = .left
-    passwordLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12.0)
+    passwordLabel.font = UIFont.fontHelveticaLight(size: 12.0)
     return passwordLabel
   }()
   
   lazy var emailTextField: UITextField = {
     let emailTextField = UITextField()
-    emailTextField.font = UIFont(name: "HelveticaNeue-Regular", size: 14.0)
+    emailTextField.font = UIFont.fontHelveticaRegular(size: 14.0)
     emailTextField.placeholder = "Enter your email..."
+    emailTextField.delegate = self
     return emailTextField
   }()
   
   lazy var passwordTextField: UITextField = {
     let passwordTextField = UITextField()
-    passwordTextField.font = UIFont(name: "HelveticaNeue-Regular", size: 14.0)
+    passwordTextField.font = UIFont.fontHelveticaRegular(size: 14.0)
     passwordTextField.placeholder = "Enter your password..."
+    passwordTextField.delegate = self
     return passwordTextField
   }()
   
@@ -66,8 +66,8 @@ class SignUpViewController: UIViewController {
     let signUpButton = UIButton()
     signUpButton.autoSetDimensions(to: CGSize(width: 70.0, height: 30.0))
     signUpButton.setTitle("Sign Up", for: .normal)
-    signUpButton.backgroundColor = UIColor(red: 0 / 255.0, green: 160.0 / 255.0, blue: 0 / 255.0, alpha: 1)
-    signUpButton.titleLabel?.font = UIFont(name: "HelveticaNeue-Regular", size: 14.0)
+    signUpButton.backgroundColor = UIColor.customGreen()
+    signUpButton.titleLabel?.font = UIFont.fontHelveticaRegular(size: 14.0)
     signUpButton.addTarget(self, action: #selector(createAccount), for: .touchUpInside)
     return signUpButton
   }()
@@ -76,8 +76,8 @@ class SignUpViewController: UIViewController {
     let linkToSignInButton = UIButton()
     linkToSignInButton.autoSetDimensions(to: CGSize(width: 70.0, height: 30.0))
     linkToSignInButton.setTitle("Sign In", for: .normal)
-    linkToSignInButton.setTitleColor(UIColor(red: 66.0/255.0, green: 143.0/255.0, blue: 222.0/255.0, alpha: 1.0), for: .normal)
-    linkToSignInButton.titleLabel?.font = UIFont(name: "HelveticaNeue-Regular", size: 14.0)
+    linkToSignInButton.setTitleColor(UIColor.customBlue(), for: .normal)
+    linkToSignInButton.titleLabel?.font = UIFont.fontHelveticaRegular(size: 14.0)
 
     linkToSignInButton.addTarget(self, action: #selector(transitionToSignIn), for: .touchUpInside)
     return linkToSignInButton
@@ -88,6 +88,9 @@ class SignUpViewController: UIViewController {
     view.backgroundColor = .white
     addSubviews()
     setupConstraints()
+    
+    let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+    view.addGestureRecognizer(tap)
   }
   
   private func addSubviews() {
@@ -116,32 +119,41 @@ class SignUpViewController: UIViewController {
     linkToSignInButton.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
   }
   
+  @objc func dismissKeyboard() {
+    emailTextField.resignFirstResponder()
+    passwordTextField.resignFirstResponder()
+  }
+  
   @objc func transitionToSignIn() {
     let signInViewController = SignInViewController()
     present(signInViewController, animated: true, completion: nil)
   }
   
   @objc func createAccount() {
-    if emailTextField.text != "" && passwordTextField.text != "" {
-      guard let email = emailTextField.text, let password = passwordTextField.text else { return }
-      requestModel.createUser(email: email, password: password, success: { (user) in
+    guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+    if email.isEmpty && password.isEmpty {
+      let emptyTexFieldAlert = FactoryManager.shared.alertManager.addAlert(message: "Please enter your email or password")
+      present(emptyTexFieldAlert, animated: true, completion:  nil)
+    } else {
+      FactoryManager.shared.firebaseManager.createUser(email: email, password: password, success: { (user) in
         print(user)
         let marvelTabBarController = MarvelTabBarController()
         let navigationController = UINavigationController(rootViewController: marvelTabBarController)
         self.present(navigationController, animated: true, completion: nil)
       }) { (error) in
-        let errorAlert = UIAlertController(title: error, message: "Please, try again", preferredStyle: .alert)
-        let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        errorAlert.addAction(defaultAction)
+        let errorAlert = FactoryManager.shared.alertManager.addAlert(message: error)
         self.present(errorAlert, animated: true, completion:  nil)
         print(error)
       }
-    } else {
-      let emptyTextFieldAlert = UIAlertController(title: nil, message: "Please enter your email or password", preferredStyle: .alert)
-      let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-      emptyTextFieldAlert.addAction(defaultAction)
-      present(emptyTextFieldAlert, animated: true, completion:  nil)
     }
   }
 
+}
+
+extension SignUpViewController: UITextFieldDelegate {
+  
+  func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    textField.resignFirstResponder()
+    return true
+  }
 }

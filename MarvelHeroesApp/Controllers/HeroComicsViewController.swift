@@ -10,10 +10,13 @@ import UIKit
 class HeroComicsViewController: UIViewController {
   
   let heroComicsLayout = HeroComicsLayout()
-  let requestModel = RequestModel()
   private var currentPage = 0
   var heroId: Int?
   var comicsCollection: [Comics] = []
+  
+  private enum Dimensions {
+    static let inset: CGFloat = 0
+  }
   
   lazy var comicsCollectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: heroComicsLayout)
@@ -37,13 +40,13 @@ class HeroComicsViewController: UIViewController {
   
   private func setupConstraints() {
     comicsCollectionView.autoPinEdge(toSuperviewEdge: .top, withInset: UIApplication.shared.statusBarFrame.height)
-    comicsCollectionView.autoPinEdge(toSuperviewEdge: .bottom, withInset: tabBarController?.tabBar.frame.height ?? 0)
-    comicsCollectionView.autoPinEdge(toSuperviewEdge: .right, withInset: 0)
-    comicsCollectionView.autoPinEdge(toSuperviewEdge: .left, withInset: 0)
+    comicsCollectionView.autoPinEdge(toSuperviewEdge: .bottom, withInset: tabBarController?.tabBar.frame.height ?? Dimensions.inset)
+    comicsCollectionView.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
+    comicsCollectionView.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
   }
 
   private func loadComics() {
-    requestModel.getComics(page: currentPage, heroId: heroId ?? 0, success: { [weak self] (success) in
+    FactoryManager.shared.marvelAPIManager.getComics(page: currentPage, heroId: heroId ?? 0, success: { [weak self] (success) in
       guard let self = self else {
         return
       }
@@ -71,7 +74,7 @@ extension HeroComicsViewController: UICollectionViewDelegate, UICollectionViewDa
         cell.imageComics.kf.indicatorType = .activity
         cell.imageComics.kf.setImage(with: url)
       } else {
-        cell.imageComics.image = UIImage(named: "no_image")
+        cell.imageComics.image = UIImage.noImage()
       }
     }
     cell.nameComicsLabel.text = comicsCollection[indexPath.row].nameComics
