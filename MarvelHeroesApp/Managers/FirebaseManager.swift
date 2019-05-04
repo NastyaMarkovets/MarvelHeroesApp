@@ -9,6 +9,7 @@
 import Foundation
 import FirebaseAuth
 import FirebaseDatabase
+import BrightFutures
 
 class FirebaseManager: NSObject {
   let auth = Auth.auth()
@@ -48,14 +49,17 @@ class FirebaseManager: NSObject {
     success("Set ID hero to database")
   }
   
-  func fetchHero(success: @escaping (Int) -> ()) {
-    guard let userId = uid else { return }
-    database.child("users").child(userId).observeSingleEvent(of: .value, with: { (snapshot) in
-      let value = snapshot.value as? NSDictionary
-      let heroId = value?["heroId"] as? Int ?? 0
-      success(heroId)
-    }) { (error) in
-      print(error.localizedDescription)
+  func fetchHero() -> Future<Int, NetworkRequestError> {
+    return Future { complete in
+      guard let userId = uid else { return }
+      database.child("users").child(userId).observeSingleEvent(of: .value, with: { (snapshot) in
+        let value = snapshot.value as? NSDictionary
+        let heroId = value?["heroId"] as? Int ?? 0
+        complete(.success(heroId))
+      }) { (error) in
+        print(error.localizedDescription)
+        complete(.failure(NetworkRequestError.networkRequestFailed))
+      }
     }
   }
 }

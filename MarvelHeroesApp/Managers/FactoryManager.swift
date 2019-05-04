@@ -7,6 +7,11 @@
 //
 
 import UIKit
+import BrightFutures
+
+enum NetworkRequestError: Error {
+  case networkRequestFailed, networkDataFailed
+}
 
 class FactoryManager: NSObject {
   static let shared = FactoryManager()

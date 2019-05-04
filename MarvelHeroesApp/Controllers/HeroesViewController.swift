@@ -11,6 +11,7 @@ import PureLayout
 import Kingfisher
 import FirebaseAuth
 import FirebaseDatabase
+import BrightFutures
 
 class HeroesViewController: UIViewController {
   
@@ -55,7 +56,7 @@ class HeroesViewController: UIViewController {
     addSubviews()
     setupConstraints()
     loadCharacters()
-    FactoryManager.shared.firebaseManager.fetchHero { (heroId) in
+    FactoryManager.shared.firebaseManager.fetchHero().onSuccess { heroId in
       self.idFavoriteHero = heroId
     }
   }
@@ -73,7 +74,7 @@ class HeroesViewController: UIViewController {
   }
   
   private func loadCharacters() {
-    FactoryManager.shared.marvelAPIManager.getCharacters(page: currentPage, success: { [weak self] (success) in
+    getAllCharacters().onSuccess { [weak self] success in
       guard let self = self else {
         return
       }
@@ -84,9 +85,14 @@ class HeroesViewController: UIViewController {
       }, completion: { (bool) in
         self.indicator.stopAnimating()
       })
-    }) { (failure) in
+    }.onFailure { error in
       self.indicator.stopAnimating()
+      print(error.localizedDescription)
     }
+  }
+  
+  func getAllCharacters() -> Future<[Hero], NetworkRequestError> {
+    return FactoryManager.shared.marvelAPIManager.getCharacters(page: currentPage)
   }
   
 }
@@ -131,3 +137,4 @@ extension HeroesViewController: FavoriteHeroDelegate {
     self.present(alertFavorite, animated: true, completion: nil)
   }
 }
+
