@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>306118204977-gu6vp84k35536fo3199r8nutn8fcdfim.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.306118204977-gu6vp84k35536fo3199r8nutn8fcdfim</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAqmj7_pMESlH4otr9R-9NMJ_aq1bdIWZk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>306118204977</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.LonelyTreeStd.MarvelHeroesApp</string>
+	<key>PROJECT_ID</key>
+	<string>marvelheroesapp-85199</string>
+	<key>STORAGE_BUCKET</key>
+	<string>marvelheroesapp-85199.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:306118204977:ios:cec2e2941631ee9a</string>
+	<key>DATABASE_URL</key>
+	<string>https://marvelheroesapp-85199.firebaseio.com</string>
+</dict>
+</plist>

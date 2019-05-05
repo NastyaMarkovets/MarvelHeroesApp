@@ -11,6 +11,7 @@ import BrightFutures
 
 enum NetworkRequestError: Error {
   case networkRequestFailed, networkDataFailed
+  case customError(value: Error)
 }
 
 class FactoryManager: NSObject {

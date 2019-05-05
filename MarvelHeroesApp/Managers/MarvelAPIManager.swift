@@ -118,21 +118,23 @@ class MarvelAPIManager: NSObject {
     }
   }
   
-  func getComics(page: Int, heroId: Int, success: @escaping ([Comics]) -> (), failure: @escaping (String) -> Void) {
+  func getComics(page: Int, heroId: Int) -> Future<[Comics], NetworkRequestError> {
     let offset = page * UrlComponents.limit
     let queryParams = ["offset": String(offset), "limit": UrlComponents.limit].queryString
     let urlCharacters = UrlComponents.url + "/characters" + "/\(heroId)" + "/comics?" + queryParams + getAuth()
-    Alamofire.request(urlCharacters, method: .get, encoding: JSONEncoding.default, headers: UrlComponents.header).validate().responseJSON { response in
-      if response.result.isSuccess {
-        if let value = response.result.value as? [String : Any] {
-          guard let data = value["data"] as? [String : Any]  else {
-            failure("Problem with request")
-            return
-          }
-          guard let results = data["results"] as? [[String : Any]] else {
-            failure("No data was found.")
-            return
-          }
+    return Future { complete in
+      Alamofire.request(urlCharacters, method: .get, encoding: JSONEncoding.default, headers: UrlComponents.header).validate().responseJSON { response in
+        guard
+          let value = response.result.value as? [String : Any],
+          let data = value["data"] as? [String : Any] else {
+            return complete(.failure(NetworkRequestError.networkRequestFailed))
+        }
+        guard let results = data["results"] as? [[String : Any]] else {
+          return complete(.failure(NetworkRequestError.networkDataFailed))
+        }
+        
+        switch response.result {
+        case .success(_):
           var comicsCollection: [Comics] = []
           for index in 0 ..< results.count {
             let comics = Comics()
@@ -147,9 +149,13 @@ class MarvelAPIManager: NSObject {
             }
             comicsCollection.append(comics)
           }
-          success(comicsCollection)
+          complete(.success(comicsCollection))
+        case .failure(_):
+          complete(.failure(NetworkRequestError.networkRequestFailed))
         }
+      
       }
     }
   }
+  
 }

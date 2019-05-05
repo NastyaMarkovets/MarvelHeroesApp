@@ -52,33 +52,31 @@ class FavoriteHeroViewController: UIViewController {
   }
   
   override func viewWillAppear(_ animated: Bool) {
-    getFavoriteCharacter().onSuccess { hero in
-      self.nameFavoriteLabel.text = hero.nameHero
-      self.descFavoriteTextView.text = hero.descriptionHero
-      self.nameFavoriteLabel.textColor = UIColor.customBlue()
-      
-      if let path = hero.urlPhoto, let ext = hero.extensionForUrlPhoto {
-        if let url = URL(string: path + "." + ext) {
-          if url == URL(string: Constants.urlNoImage) {
-            self.avatarFavorite.image = UIImage.noImage()
-            return
-          }
-          self.avatarFavorite.kf.indicatorType = .activity
-          self.avatarFavorite.kf.setImage(with: url)
-        } else {
-          self.avatarFavorite.image = UIImage.noImage()
+    FactoryManager.shared.firebaseManager.fetchHero().onSuccess { [weak self] heroId in
+      FactoryManager.shared.marvelAPIManager.getCharacter(heroId: heroId).onSuccess { [weak self] hero in
+        guard let self = self else {
+          return
         }
-      }
-    }.onFailure { error in
+        self.nameFavoriteLabel.text = hero.nameHero
+        self.descFavoriteTextView.text = hero.descriptionHero
+        self.nameFavoriteLabel.textColor = UIColor.customBlue()
+        
+        if let path = hero.urlPhoto, let ext = hero.extensionForUrlPhoto {
+          if let url = URL(string: path + "." + ext) {
+            if url == URL(string: Constants.urlNoImage) {
+              self.avatarFavorite.image = UIImage.noImage()
+              return
+            }
+            self.avatarFavorite.kf.indicatorType = .activity
+            self.avatarFavorite.kf.setImage(with: url)
+          } else {
+            self.avatarFavorite.image = UIImage.noImage()
+          }
+        }
+      }.onFailure { error in
         print(error.localizedDescription)
+      }
     }
-}
-  
-  func getFavoriteCharacter() -> Future<Hero, NetworkRequestError> {
-    FactoryManager.shared.firebaseManager.fetchHero().onSuccess { heroId in
-      return FactoryManager.shared.marvelAPIManager.getCharacter(heroId: heroId)
-    }
-    return FactoryManager.shared.marvelAPIManager.getCharacter(heroId: 0)
   }
   
   private func addSubviews() {

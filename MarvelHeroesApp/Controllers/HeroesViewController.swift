@@ -56,7 +56,10 @@ class HeroesViewController: UIViewController {
     addSubviews()
     setupConstraints()
     loadCharacters()
-    FactoryManager.shared.firebaseManager.fetchHero().onSuccess { heroId in
+    FactoryManager.shared.firebaseManager.fetchHero().onSuccess { [weak self] heroId in
+      guard let self = self else {
+        return
+      }
       self.idFavoriteHero = heroId
     }
   }

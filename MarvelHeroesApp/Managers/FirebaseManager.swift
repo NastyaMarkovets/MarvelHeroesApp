@@ -20,33 +20,38 @@ class FirebaseManager: NSObject {
     }
   }
   
-  func createUser(email: String, password: String, success: @escaping (String) -> (), failure: @escaping (String) -> Void) {
-    auth.createUser(withEmail: email, password: password) { (user, error) in
-      if error == nil {
-        success("You have successfully signed up")
-      } else {
-        guard let acceptedError = error?.localizedDescription else { return }
-        failure("Sorry, \(String(describing: acceptedError))")
-        
+  func createUser(email: String, password: String) -> Future<String, NetworkRequestError> {
+    return Future { complete in
+      auth.createUser(withEmail: email, password: password) { (user, error) in
+        if error == nil {
+          complete(.success("You have successfully signed up"))
+        } else {
+          guard let acceptedError = error else { return }
+          complete(.failure(NetworkRequestError.customError(value: acceptedError)))
+        }
       }
     }
   }
   
-  func signInAccount(email: String, password: String, success: @escaping (String) -> (), failure: @escaping (String) -> Void) {
-    auth.signIn(withEmail: email, password: password) { (user, error) in
-      if error == nil {
-        success("You have successfully signed in")
-      } else {
-        guard let acceptedError = error?.localizedDescription else { return }
-        failure("Sorry, \(String(describing: acceptedError))")
+  func signInAccount(email: String, password: String) -> Future<String, NetworkRequestError> {
+    return Future { complete in
+      auth.signIn(withEmail: email, password: password) { (user, error) in
+        if error == nil {
+          complete(.success("You have successfully signed in"))
+        } else {
+          guard let acceptedError = error else { return }
+          complete(.failure(NetworkRequestError.customError(value: acceptedError)))
+        }
       }
     }
   }
   
-  func setHero(heroId: Int, success: @escaping (String) -> ()) {
-    guard let userId = uid else { return }
-    database.child("users").child("\(userId)").setValue(["heroId" : heroId])
-    success("Set ID hero to database")
+  func setHero(heroId: Int) -> Future<String, NetworkRequestError> {
+    return Future { complete in
+      guard let userId = uid else { return }
+      database.child("users").child("\(userId)").setValue(["heroId" : heroId])
+      complete(.success("Set ID hero to database"))
+    }
   }
   
   func fetchHero() -> Future<Int, NetworkRequestError> {
@@ -62,4 +67,5 @@ class FirebaseManager: NSObject {
       }
     }
   }
+  
 }
