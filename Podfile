@@ -7,6 +7,8 @@ target 'MarvelHeroesApp' do
 
   # Pods for MarvelHeroesApp
     pod 'PureLayout'
+    pod 'SnapKit', '~> 5.0.0'
+    
     pod 'Alamofire'
     pod 'Kingfisher'
     pod 'Firebase/Auth'

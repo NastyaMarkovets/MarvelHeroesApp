@@ -71,6 +71,7 @@ PODS:
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - PureLayout (3.1.4)
+  - SnapKit (5.0.0)
 
 DEPENDENCIES:
   - Alamofire
@@ -80,6 +81,7 @@ DEPENDENCIES:
   - Firebase/Database
   - Kingfisher
   - PureLayout
+  - SnapKit (~> 5.0.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -99,6 +101,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - PureLayout
+    - SnapKit
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
@@ -117,7 +120,8 @@ SPEC CHECKSUMS:
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   PureLayout: f08c01b8dec00bb14a1fefa3de4c7d9c265df85e
+  SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
 
-PODFILE CHECKSUM: e944bf37551c662e3f8f95efae5ed4e723ed9c40
+PODFILE CHECKSUM: 0ec2de08dbaeee4b01f02fd91c3cc5d62f3c01a2
 
 COCOAPODS: 1.5.3

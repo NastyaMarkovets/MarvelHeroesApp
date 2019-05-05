@@ -9,7 +9,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
-import PureLayout
+import SnapKit
 import BrightFutures
 
 class FavoriteHeroViewController: UIViewController {
@@ -86,16 +86,22 @@ class FavoriteHeroViewController: UIViewController {
   }
   
   private func setupConstraints() {
-    avatarFavorite.autoPinEdge(toSuperviewEdge: .top, withInset: UIApplication.shared.statusBarFrame.height)
+    avatarFavorite.snp.makeConstraints { image in
+      image.top.equalTo(view).offset(UIApplication.shared.statusBarFrame.height)
+    }
     
-    nameFavoriteLabel.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
-    nameFavoriteLabel.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
-    nameFavoriteLabel.autoPinEdge(.top, to: .bottom, of: avatarFavorite, withOffset: Dimensions.insetTopToBottom)
+    nameFavoriteLabel.snp.makeConstraints { label in
+      label.left.equalTo(view).offset(Dimensions.inset)
+      label.right.equalTo(view).offset(Dimensions.inset)
+      label.top.equalTo(avatarFavorite.snp.bottom).offset(Dimensions.insetTopToBottom)
+    }
     
-    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .left, withInset: Dimensions.inset)
-    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .right, withInset: Dimensions.inset)
-    descFavoriteTextView.autoPinEdge(toSuperviewEdge: .bottom, withInset: (tabBarController?.tabBar.frame.height ?? 0) + Dimensions.insetTopToBottom)
-    descFavoriteTextView.autoPinEdge(.top, to: .bottom, of: nameFavoriteLabel, withOffset: Dimensions.insetTopToBottom)
+    descFavoriteTextView.snp.makeConstraints { textView in
+      textView.left.equalTo(view).offset(Dimensions.inset)
+      textView.right.equalTo(view).offset(Dimensions.inset)
+      textView.bottom.equalTo(view).offset((tabBarController?.tabBar.frame.height ?? 0) + Dimensions.insetTopToBottom)
+      textView.top.equalTo(nameFavoriteLabel.snp.bottom).offset(Dimensions.insetTopToBottom)
+    }
   }
   
 }
