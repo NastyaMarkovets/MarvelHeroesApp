@@ -11,7 +11,14 @@ import FirebaseAuth
 import FirebaseDatabase
 import BrightFutures
 
-class FirebaseManager: NSObject {
+protocol FirebaseManagerProtocol {
+    func createUser(email: String, password: String) -> Future<String, NetworkRequestError>
+    func signInAccount(email: String, password: String) -> Future<String, NetworkRequestError>
+    func setHero(heroId: Int) -> Future<String, NetworkRequestError>
+    func fetchHero() -> Future<Int, NetworkRequestError>
+}
+
+class FirebaseManager: FirebaseManagerProtocol {
   let auth = Auth.auth()
   let database = Database.database().reference()
   var uid: String? {

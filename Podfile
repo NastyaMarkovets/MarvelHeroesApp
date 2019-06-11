@@ -15,4 +15,9 @@ target 'MarvelHeroesApp' do
     pod 'Firebase/Core'
     pod 'Firebase/Database'
     pod 'BrightFutures'
+    
+    target 'MarvelHeroesAppTests' do
+      pod 'Firebase'
+    end
+    
 end

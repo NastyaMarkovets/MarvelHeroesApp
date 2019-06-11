@@ -17,13 +17,14 @@ class FavoriteHeroViewController: UIViewController {
   private enum Dimensions {
     static let inset: CGFloat = 12
     static let insetTopToBottom: CGFloat = 6
+    static let insetHorizontaly: CGFloat = 20
   }
   
   lazy var avatarFavorite: UIImageView = {
     let imageView = UIImageView()
-    imageView.contentMode = .scaleAspectFill
     imageView.clipsToBounds = true
-    imageView.autoSetDimensions(to: CGSize(width: view.frame.width, height: view.frame.height / 2))
+    imageView.autoSetDimensions(to: CGSize(width: view.frame.width - Dimensions.insetHorizontaly * 2, height: view.frame.height / 2))
+    imageView.layer.cornerRadius = 10
     return imageView
   }()
   
@@ -43,13 +44,32 @@ class FavoriteHeroViewController: UIViewController {
     desc.isSelectable = false
     return desc
   }()
+    
+    let transition = PopAnimator()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .white
     addSubviews()
     setupConstraints()
+    
+    let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
+    avatarFavorite.isUserInteractionEnabled = true
+    avatarFavorite.addGestureRecognizer(tapGestureRecognizer)
+    
   }
+    
+    @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        let modalStyle = UIModalTransitionStyle.coverVertical
+        let animationController = AnimationPictureViewController()
+        animationController.transitioningDelegate = self
+        animationController.photoHero = avatarFavorite.image
+
+        animationController.modalTransitionStyle = modalStyle
+        present(animationController, animated: true, completion: nil)
+    }
+    
+    
   
   override func viewWillAppear(_ animated: Bool) {
     FactoryManager.shared.firebaseManager.fetchHero().onSuccess { [weak self] heroId in
@@ -87,7 +107,8 @@ class FavoriteHeroViewController: UIViewController {
   
   private func setupConstraints() {
     avatarFavorite.snp.makeConstraints { image in
-      image.top.equalTo(view).offset(UIApplication.shared.statusBarFrame.height)
+      image.top.equalTo(view).offset((tabBarController?.tabBar.frame.height ?? 0) + Dimensions.insetTopToBottom)
+        image.centerX.equalTo(view)
     }
     
     nameFavoriteLabel.snp.makeConstraints { label in
@@ -104,4 +125,31 @@ class FavoriteHeroViewController: UIViewController {
     }
   }
   
+}
+
+extension FavoriteHeroViewController: UIViewControllerTransitioningDelegate {
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController, source: UIViewController)
+        -> UIViewControllerAnimatedTransitioning? {
+            
+            guard let imageSuperview = avatarFavorite.superview else { return nil }
+            
+            transition.originFrame = imageSuperview.convert(avatarFavorite.frame, to: nil)
+            transition.originFrame = CGRect(
+                x: transition.originFrame.origin.x,
+                y: transition.originFrame.origin.y,
+                width: transition.originFrame.size.width,
+                height: transition.originFrame.size.height
+            )
+            
+            transition.presenting = true
+            
+            return transition
+    }
+    func animationController(forDismissed dismissed: UIViewController)
+        -> UIViewControllerAnimatedTransitioning? {
+            transition.presenting = false
+            return transition
+    }
 }
