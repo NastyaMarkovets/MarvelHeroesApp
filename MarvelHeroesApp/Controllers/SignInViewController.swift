@@ -123,13 +123,16 @@ class SignInViewController: UIViewController {
       let emptyTextFieldAlert = FactoryManager.shared.alertManager.addAlert(message: "Please enter your email or password")
       present(emptyTextFieldAlert, animated: true, completion:  nil)
     } else {
-      FactoryManager.shared.firebaseManager.signInAccount(email: email, password: password, success: { (user) in
+      FactoryManager.shared.firebaseManager.signInAccount(email: email, password: password).onSuccess { [weak self] user in
+        guard let self = self else {
+          return
+        }
         print(user)
         let marvelTabBarController = MarvelTabBarController()
         let navigationController = UINavigationController(rootViewController: marvelTabBarController)
         self.present(navigationController, animated: true, completion: nil)
-      }) { (error) in
-        let errorAlert = FactoryManager.shared.alertManager.addAlert(message: error)
+      }.onFailure { error in
+        let errorAlert = FactoryManager.shared.alertManager.addAlert(message: error.localizedDescription)
         self.present(errorAlert, animated: true, completion:  nil)
         print(error)
       }
