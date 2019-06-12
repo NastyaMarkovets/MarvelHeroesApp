@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import BrightFutures
 
 class HeroComicsViewController: UIViewController {
   
@@ -46,15 +47,19 @@ class HeroComicsViewController: UIViewController {
   }
 
   private func loadComics() {
-    FactoryManager.shared.marvelAPIManager.getComics(page: currentPage, heroId: heroId ?? 0, success: { [weak self] (success) in
+    getAllComics().onSuccess { [weak self] (success) in
       guard let self = self else {
         return
       }
       self.comicsCollection += success
       self.comicsCollectionView.reloadData()
-    }) { (failure) in
-      print(failure)
+      }.onFailure { error in
+        print(error)
     }
+  }
+  
+  func getAllComics() -> Future<[Comics], NetworkRequestError> {
+    return FactoryManager.shared.marvelAPIManager.getComics(page: currentPage, heroId: heroId ?? 0)
   }
   
 }

@@ -120,7 +120,7 @@ class HeroTableViewCell: UITableViewCell {
   
   @objc func clickFavorite() {
     if let heroId = heroId {
-      FactoryManager.shared.firebaseManager.setHero(heroId: heroId) { (success) in
+      FactoryManager.shared.firebaseManager.setHero(heroId: heroId).onSuccess { success in
         print(success)
       }
       guard let nameHero = nameLabel.text else { return }
